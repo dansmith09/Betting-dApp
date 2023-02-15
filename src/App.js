@@ -1,8 +1,7 @@
-import logo from './logo.svg';
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 // Web3 Dependencies
-import { Contract, providers, utils } from "ethers";
+import { Contract, providers } from "ethers";
 import Web3Modal from "web3modal";
 import { abi, NFT_CONTRACT_ADDRESS } from "./constants";
 
@@ -49,6 +48,7 @@ function App() {
         setConnectedAddress(accounts[0])
         formatAndSetAddress(accounts[0])
         checkOwner(accounts[0])
+        resolveENS(accounts[0])
         renderMarketInfo()
       } catch (error) {
         console.err(error)
@@ -117,7 +117,6 @@ function App() {
     const owner = await bettingContract.owner()
 
     if (account === owner.toLowerCase()){
-      console.log('Connected Wallet is the owner')
       setIsOwner(true)
     }
   }
@@ -151,11 +150,16 @@ function App() {
       const signer = await getProviderOrSigner();
       requestAccounts()
       setWalletConnected(true);
-      // get info for betting markets
     } catch (err) {
       console.error(err);
     }
   };
+
+  const resolveENS  = async (address) => {
+    const signer = await getProviderOrSigner();
+    const name = await signer.lookupAddress(address);
+    name && setFormettedConnectedAddress(name)
+  }
 
   const toggleTakingBets = async () => {
 
@@ -234,11 +238,13 @@ function App() {
 
   return (
     <div className="App">
-      {
-      connectedAddress ? 
-      <h2>{formattedConnectedAddress}</h2> :
-      <button onClick={connectWallet}>Connect Wallet</button>
-      }
+      <header>
+        {
+        connectedAddress ? 
+        <button className='connectWalletBtn'>{formattedConnectedAddress}</button> :
+        <button className='connectWalletBtn' onClick={connectWallet}>Connect Wallet</button>
+        }
+      </header>
       { !isOwner ?
       <>
         <h1>{marketTitle ? marketTitle : 'Market Title'}</h1>

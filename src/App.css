@@ -112,18 +112,33 @@ h1 {
   width: 350px;
   height: 60px;
 }
-.readyToBet {
+.readyToBet, .connectWalletBtn {
   transition: 0.2s;
   font-size: 14px;
   color: whitesmoke;
   font-weight: bolder;
   background: linear-gradient(90deg, #1087F3 0%, #AC43E0 76%);
 }
-.readyToBet:hover {
+.readyToBet:hover, .connectWalletBtn:hover {
   color: rgba(255, 255, 255, 1);
   box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
 }
 .notReadyToBet {
   background: rgb(170, 172, 174);
   color: grey;
+}
+
+header {
+  display: flex;
+  justify-content: right;
+}
+
+
+.connectWalletBtn {
+  padding: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+  border-radius: 20px;
+  border: none;
+  margin: 20px;
 }
