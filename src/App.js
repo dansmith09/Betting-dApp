@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 // Web3 Dependencies
-import { Contract, providers } from "ethers";
+import { Contract, providers, utils } from "ethers";
 import Web3Modal from "web3modal";
 import { abi, NFT_CONTRACT_ADDRESS } from "./constants";
+import DoughnutChart from './charts/DoughnutChart'
+import BarChart from './charts/BarChart'
+
 
 
 function App() {
@@ -21,6 +24,7 @@ function App() {
   const [outcomeTwoBetAmount, setOutcomeTwoBetAmount] = useState(0)
   const [outcomeOneStake, setOutcomeOneStake] = useState(0)
   const [outcomeTwoStake, setOutcomeTwoStake] = useState(0)
+  const [marketInfo, setMarketInfo] =useState({})
   
   const [takingBets, setTakingBets] = useState(false)
   // Web3ModalRef
@@ -36,8 +40,19 @@ function App() {
     if (!walletConnected) {
       connectWallet();
     }
-    
-  }, [walletConnected])
+    setMarketInfo({
+      outcomeOneBetAmount,
+      outcomeTwoBetAmount,
+      selectionOneTitle,
+      selectionTwoTitle
+    })
+  }, [
+    walletConnected,
+    outcomeOneBetAmount,
+    outcomeTwoBetAmount,
+    selectionOneTitle,
+    selectionTwoTitle
+  ])
 
   const requestAccounts = async () => {
     if(window.ethereum) {
@@ -98,11 +113,11 @@ function App() {
 
     const outcomeOneBetAmount = bettingContract.outcomeOneBetAmount();
     outcomeOneBetAmount.then((response) => {
-      setOutcomeOneBetAmount(response);
+      setOutcomeOneBetAmount(utils.formatUnits(response, 18));
     })
     const outcomeTwoBetAmount = bettingContract.outcomeTwoBetAmount();
     outcomeTwoBetAmount.then((response) => {
-      setOutcomeTwoBetAmount(response);
+      setOutcomeTwoBetAmount(utils.formatUnits(response, 18));
     })
 
     setLoadingBetInfo(false);
@@ -232,9 +247,13 @@ function App() {
     setOutcomeTwoStake(newStake)
   }
 
-  const handleBetOnOutcomeTwo = () => {
-
+  const handleBetOnOutcomeOne = () => {
+    // TODO
   }
+  const handleBetOnOutcomeTwo = () => {
+    // TODO
+  }
+  
 
   return (
     <div className="App">
@@ -260,7 +279,7 @@ function App() {
               <button className='incrementStakeBtn' onClick={() => incrementOutcomeOneStake(0.5)}>+ 0.5 Ξ</button>
               <button className='incrementStakeBtn' onClick={() => incrementOutcomeOneStake(1)}>+ 1 Ξ</button>
               <button className='clearStakeBtn' onClick={() => setOutcomeOneStake(0)}>Clear</button>
-              <button className={`submitBetBtn outcomeOne ${outcomeOneStake? 'readyToBet':'notReadyToBet'}`}>{!outcomeOneStake? "Enter Stake" : `Bet ${outcomeOneStake} Ξ on ${selectionOneTitle}`}</button>
+              <button className={`submitBetBtn outcomeOne ${outcomeOneStake? 'readyToBet':'notReadyToBet'}`} onClick={handleBetOnOutcomeOne}>{!outcomeOneStake? "Enter Stake" : `Bet ${outcomeOneStake} Ξ on ${selectionOneTitle}`}</button>
             </div>
           </div>
           <div className='betCards'>
@@ -277,6 +296,20 @@ function App() {
             </div>
           </div>
         </div>
+        { // If market all market data exists then render charts
+          outcomeOneBetAmount &&
+          outcomeTwoBetAmount &&
+          selectionOneTitle && // TODO add > 0 
+          selectionTwoTitle ? // TODO add > 0 
+          <div className='chartsContainer'>
+            <div className="DoughnutChartHolder">
+              <DoughnutChart marketInfo={marketInfo}/>
+            </div>
+            <div className="DoughnutChartHolder">
+              <BarChart marketInfo={marketInfo}/>
+            </div>
+          </div> : ""}
+
       </>
       :
       <>          
