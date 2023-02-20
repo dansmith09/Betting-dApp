@@ -30,8 +30,8 @@ const BarChart = (props) => {
       {
         label: 'Bet Amount',
         data: [
-          parseInt(props.marketInfo.outcomeOneBetAmount) + 1,
-          parseInt(props.marketInfo.outcomeTwoBetAmount) + 0.2
+          parseFloat(props.marketInfo.outcomeOneBetAmount),
+          parseFloat(props.marketInfo.outcomeTwoBetAmount)
         ],
         backgroundColor: [
           'rgb(16, 135, 243, 0.3)',

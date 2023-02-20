@@ -20,7 +20,10 @@ h1 {
 
 .App {
   text-align: center;
-  background: linear-gradient(0deg, #050026 0%, #270A19 100%);}
+  background: linear-gradient(0deg, #050026 0%, #270A19 100%);
+  min-height: 100vh;
+  min-width: 100vw;
+}
 
 .betHolder {
   display: flex;
@@ -55,6 +58,16 @@ h1 {
   width: 70%;
 }
 
+.selectionOneTitle {
+  border-bottom: solid 2px rgb(16, 135, 243);
+  box-shadow: 0 10px 10px -10px rgb(16, 135, 243);
+}
+
+.selectionTwoTitle {
+  border-bottom: solid 2px rgb(172, 67, 224);
+  box-shadow: 0 10px 10px -10px rgb(172, 67, 224);
+}
+
 .stakeBtnContainer {
   /* border: red solid 2px; */
   max-width: 200px;
@@ -65,7 +78,6 @@ h1 {
   flex-basis: 60%;
   margin: 20px;
 }
-
 
 .incrementStakeBtn {
   transition: 0.2s;
@@ -81,7 +93,6 @@ h1 {
 .incrementStakeBtn:hover {
   background: radial-gradient( #F5ECEC 0%, #EFCAE7 100%);
 }
-
 
 .clearStakeBtn {
   background: linear-gradient(193deg, #DA4EB9 0%, #DA4E4E 100%);
@@ -110,6 +121,7 @@ h1 {
   width: 350px;
   height: 60px;
 }
+
 .readyToBet, .connectWalletBtn {
   transition: 0.2s;
   font-size: 14px;
@@ -117,10 +129,12 @@ h1 {
   font-weight: bolder;
   background: linear-gradient(90deg, #1087F3 0%, #AC43E0 76%);
 }
+
 .readyToBet:hover, .connectWalletBtn:hover {
   color: rgba(255, 255, 255, 1);
   box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
 }
+
 .notReadyToBet {
   background: rgb(170, 172, 174);
   color: grey;
@@ -132,7 +146,6 @@ header {
   justify-content: right;
   position: fixed;
 }
-
 
 .connectWalletBtn {
   padding: 15px;

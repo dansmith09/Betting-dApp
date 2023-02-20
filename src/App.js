@@ -25,8 +25,8 @@ function App() {
   const [outcomeOneStake, setOutcomeOneStake] = useState(0)
   const [outcomeTwoStake, setOutcomeTwoStake] = useState(0)
   const [marketInfo, setMarketInfo] =useState({})
-  
-  const [takingBets, setTakingBets] = useState(false)
+  const [takingBets, setTakingBets] = useState()
+  const [winner, setWinner] = useState()
   // Web3ModalRef
   const web3ModalRef = useRef();
 
@@ -51,7 +51,7 @@ function App() {
     outcomeOneBetAmount,
     outcomeTwoBetAmount,
     selectionOneTitle,
-    selectionTwoTitle
+    selectionTwoTitle,
   ])
 
   const requestAccounts = async () => {
@@ -115,9 +115,14 @@ function App() {
     outcomeOneBetAmount.then((response) => {
       setOutcomeOneBetAmount(utils.formatUnits(response, 18));
     })
+    
     const outcomeTwoBetAmount = bettingContract.outcomeTwoBetAmount();
     outcomeTwoBetAmount.then((response) => {
       setOutcomeTwoBetAmount(utils.formatUnits(response, 18));
+    })
+    const takingBets = bettingContract.takingBets();
+    takingBets.then((response) => {
+      setTakingBets(response);
     })
 
     setLoadingBetInfo(false);
@@ -191,6 +196,7 @@ function App() {
       takingBets.then((result) => {
         setTakingBets(result)
       })
+      renderMarketInfo();
     }
 
     if(takingBets) {
@@ -247,11 +253,68 @@ function App() {
     setOutcomeTwoStake(newStake)
   }
 
-  const handleBetOnOutcomeOne = () => {
-    // TODO
+  const handleBetOnOutcomeOne = async () => {
+    if(outcomeOneStake > 0.01) {
+      try {
+        const signer = await getProviderOrSigner(true);
+        // Create a new instance of the Contract with a Signer, which allows update methods
+        const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, signer);
+        // call the mint from the contract to mint the Proof of Persistence
+        const tx = await nftContract.betOnOutcomeOne({
+          value: utils.parseEther(outcomeOneStake),
+        });
+        // setLoading(true); TODO
+        // wait for the transaction to get mined
+        await tx.wait();
+        setOutcomeOneStake(0)
+        // setLoading(false); TODO
+        renderMarketInfo();
+        // display modal saying successful bet placed TODO
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
-  const handleBetOnOutcomeTwo = () => {
-    // TODO
+  const handleBetOnOutcomeTwo = async () => {
+    if(outcomeTwoStake > 0.01) {
+      try {
+        const signer = await getProviderOrSigner(true);
+        // Create a new instance of the Contract with a Signer, which allows update methods
+        const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, signer);
+        // call the mint from the contract to mint the Proof of Persistence
+        const tx = await nftContract.betOnOutcomeTwo({
+          value: utils.parseEther(outcomeTwoStake),
+        });
+        // setLoading(true); TODO
+        // wait for the transaction to get mined
+        await tx.wait();
+        setOutcomeTwoStake(0)
+        // setLoading(false); TODO
+        renderMarketInfo();
+        // display modal saying successful bet placed TODO
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  const handleDertermineWinner = async () => {
+    try {
+      const signer = await getProviderOrSigner(true);
+      // Create a new instance of the Contract with a Signer, which allows update methods
+      const nftContract = new Contract(NFT_CONTRACT_ADDRESS, abi, signer);
+      // call the mint from the contract to mint the Proof of Persistence
+      const tx = await nftContract.determineWinner(winner);
+      // setLoading(true); TODO
+      // wait for the transaction to get mined
+      await tx.wait();
+      // setLoading(false); TODO
+      alert(`Outcome ${winner} was determined the winner!`)
+      renderMarketInfo();
+      // display modal saying successful winner determined TODO
+    } catch (err) {
+      console.error(err);
+    }
   }
   
 
@@ -270,7 +333,7 @@ function App() {
         <h2>{marketType ? marketType : 'Market Type'}</h2>
         <div className='betHolder'>
           <div className='betCards'>
-            <h3>{selectionOneTitle ? selectionOneTitle : "Selection One Title"}</h3>
+            <h3 className='selectionOneTitle'>{selectionOneTitle ? selectionOneTitle : "Selection One Title"}</h3>
             <div className='stakeBtnContainer'>
               <button className='incrementStakeBtn' onClick={() => incrementOutcomeOneStake(0.01)}>+ 0.01 Ξ</button>
               <button className='incrementStakeBtn' onClick={() => incrementOutcomeOneStake(0.02)}>+ 0.02 Ξ</button>
@@ -283,7 +346,7 @@ function App() {
             </div>
           </div>
           <div className='betCards'>
-            <h3>{selectionTwoTitle ? selectionTwoTitle : "Selection Two Title"}</h3>
+            <h3 className='selectionTwoTitle'>{selectionTwoTitle ? selectionTwoTitle : "Selection Two Title"}</h3>
             <div className='stakeBtnContainer'>
               <button className='incrementStakeBtn' onClick={() => incrementOutcomeTwoStake(0.01)}>+ 0.01 Ξ</button>
               <button className='incrementStakeBtn' onClick={() => incrementOutcomeTwoStake(0.02)}>+ 0.02 Ξ</button>
@@ -324,6 +387,9 @@ function App() {
           <input placeholder='Market Type' type='text' onChange={(e) => setSelectionTwoTitle(e.target.value)}></input>
           <button onClick={handleSubmitMarketInformation}>Submit Market Information</button>
           <button onClick={toggleTakingBets}>{takingBets? 'Stop Taking Bets' : 'Start Taking Bets'}</button>
+          <button onClick={() => setWinner(1)}>1</button>
+          <button onClick={() => setWinner(2)}>2</button>
+          <button onClick={handleDertermineWinner}>{takingBets? 'Stop Taking Bets To Determine Winner' : !winner? 'select a winner' : `Determine ${winner} as Winner`}</button>
         </div>
       </>
       }

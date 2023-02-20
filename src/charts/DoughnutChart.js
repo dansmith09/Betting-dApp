@@ -16,8 +16,8 @@ const DoughnutChart = (props) => {
       {
         label: 'Bet Distribution',
         data: [
-          parseInt(props.marketInfo.outcomeOneBetAmount) + 1,
-          parseInt(props.marketInfo.outcomeTwoBetAmount) + 0.2
+          parseFloat(props.marketInfo.outcomeOneBetAmount),
+          parseFloat(props.marketInfo.outcomeTwoBetAmount)
         ],
         backgroundColor: [
           'rgb(16, 135, 243, 0.3)',
