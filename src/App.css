@@ -130,9 +130,15 @@ h1 {
   background: linear-gradient(90deg, #1087F3 0%, #AC43E0 76%);
 }
 
-.readyToBet:hover, .connectWalletBtn:hover {
+.readyToBet:hover,
+.connectWalletBtn:hover,
+.submitBetInfoBtn:hover,
+.startTakingBetsBtn:hover,
+.stopTakingBetsBtn:hover,
+.selectionOneBtn:hover,
+.selectionTwoBtn:hover {
   color: rgba(255, 255, 255, 1);
-  box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
+  box-shadow: 0 5px 15px rgba(202, 200, 204, 0.4);
 }
 
 .notReadyToBet {
@@ -141,10 +147,11 @@ h1 {
 }
 
 header {
-  width: 100%;
   display: flex;
   justify-content: right;
   position: fixed;
+  right: 0;
+  top: 0;
 }
 
 .connectWalletBtn {
@@ -168,4 +175,76 @@ header {
   max-height: 300px;
   padding: 20px;
   margin: 20px;
+}
+
+.ownerDiv{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10%;
+}
+
+.ownerDiv input{
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+.marketInfoContainer, .winnerContainer{
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.winnerContainer {
+  gap: 20px;
+}
+
+.startTakingBetsBtn, .stopTakingBetsBtn, .submitBetInfoBtn {
+  border: none;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: whitesmoke;
+  font-weight: bolder;
+}
+.submitBetInfoBtn {
+  background: linear-gradient(90deg, #1087F3 0%, #AC43E0 76%);
+  max-width: 250px;
+}
+.topMargin25px {
+  margin-top: 25px;
+}
+.stopTakingBetsBtn {
+  background: linear-gradient(193deg, #DA4EB9 0%, #DA4E4E 100%);
+}
+.startTakingBetsBtn {
+  background: linear-gradient(215deg, rgba(44,110,28,1) 0%, rgba(109,203,56,1) 100%);
+}
+.winnerBtnContainer {
+  display: flex;
+  gap: 20px;
+}
+.selectionOneBtn, .selectionTwoBtn {
+  border-radius: 10px;
+  font-size: 20px;
+  color: whitesmoke;
+  font-weight: bolder;
+  height: 70px;
+  width: 115px;
+  border: none;
+}
+.selectionOneBtn {
+  background: rgb(16, 135, 243, 0.5);
+  border: solid 2px rgb(16, 135, 243);
+  box-shadow: 0 10px 10px -10px rgb(16, 135, 243);
+}
+
+.selectionTwoBtn {
+  background: rgb(172, 67, 224, 0.5);
+  border: solid 2px rgb(172, 67, 224);
+  box-shadow: 0 10px 10px -10px rgb(172, 67, 224);
+}
+
+::placeholder {
+  text-align: center; 
 }

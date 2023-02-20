@@ -176,9 +176,12 @@ function App() {
   };
 
   const resolveENS  = async (address) => {
-    const signer = await getProviderOrSigner();
-    const name = await signer.lookupAddress(address);
-    name && setFormettedConnectedAddress(name)
+    const provider = await getProviderOrSigner()
+    provider.lookupAddress(address).then((response) => {
+    if(response) {
+        setFormettedConnectedAddress(response)
+      }
+    })
   }
 
   const toggleTakingBets = async () => {
@@ -202,8 +205,8 @@ function App() {
     if(takingBets) {
       const tx = await bettingContract.stopTakingBets()
       await tx.wait();
-      const takingBets = await bettingContract.takingBets()
-      takingBets.then((result) => {
+      const takingBetsBool = await bettingContract.takingBets()
+      takingBetsBool.then((result) => {
         setTakingBets(result)
       })
     }
@@ -212,17 +215,22 @@ function App() {
   }
 
   const handleSubmitMarketInformation = async () => {
+    if(marketTitle && marketType && selectionOneTitle && selectionTwoTitle) {
 
-    setLoadingBetInfo(true);
+      setLoadingBetInfo(true);
+  
+      const signer = await getProviderOrSigner(true)
+  
+      const bettingContract = new Contract(NFT_CONTRACT_ADDRESS, abi, signer)
+  
+      const tx = await bettingContract.initializeMarket(marketTitle, marketType, selectionOneTitle, selectionTwoTitle)
+      await tx.wait()
+  
+      setLoadingBetInfo(true);
 
-    const signer = await getProviderOrSigner(true)
-
-    const bettingContract = new Contract(NFT_CONTRACT_ADDRESS, abi, signer)
-
-    const tx = await bettingContract.initializeMarket(marketTitle, marketType, selectionOneTitle, selectionTwoTitle)
-    await tx.wait()
-
-    setLoadingBetInfo(true);
+    } else {
+      alert(`Please Enter all market info\nmarketTitle: ${marketTitle}\nmarketType: ${marketType}\nselectionOneTitle: ${selectionOneTitle}\nselectionTwoTitle: ${selectionTwoTitle}`)
+    }
   }
 
   const incrementOutcomeOneStake = (value) => {
@@ -275,6 +283,7 @@ function App() {
       }
     }
   }
+
   const handleBetOnOutcomeTwo = async () => {
     if(outcomeTwoStake > 0.01) {
       try {
@@ -317,7 +326,6 @@ function App() {
     }
   }
   
-
   return (
     <div className="App">
       <header>
@@ -372,26 +380,36 @@ function App() {
               <BarChart marketInfo={marketInfo}/>
             </div>
           </div> : ""}
-
       </>
       :
-      <>          
         <div className='ownerDiv'>
-          <h3>{marketTitle? marketTitle : 'Market Title'}</h3>
-          <input placeholder='Market Title' type='text' onChange={(e) => setMarketTitle(e.target.value)}></input>
-          <h3>{marketType? marketType : 'Market Type'}</h3>
-          <input placeholder='Market Type' type='text' onChange={(e) => setMarketType(e.target.value)}></input>
-          <h3>{selectionOneTitle? selectionOneTitle : 'Market Type'}</h3>
-          <input placeholder='Market Type' type='text' onChange={(e) => setSelectionOneTitle(e.target.value)}></input>
-          <h3>{selectionTwoTitle? selectionTwoTitle : 'Market Type'}</h3>
-          <input placeholder='Market Type' type='text' onChange={(e) => setSelectionTwoTitle(e.target.value)}></input>
-          <button onClick={handleSubmitMarketInformation}>Submit Market Information</button>
-          <button onClick={toggleTakingBets}>{takingBets? 'Stop Taking Bets' : 'Start Taking Bets'}</button>
-          <button onClick={() => setWinner(1)}>1</button>
-          <button onClick={() => setWinner(2)}>2</button>
-          <button onClick={handleDertermineWinner}>{takingBets? 'Stop Taking Bets To Determine Winner' : !winner? 'select a winner' : `Determine ${winner} as Winner`}</button>
+          <div className='marketInfoContainer topMargin25px'>
+            <h3>{marketTitle? marketTitle : 'Market Title'}</h3>
+            <input placeholder='Market Title' type='text' onChange={(e) => setMarketTitle(e.target.value)}></input>
+            <h3>{marketType? marketType : 'Market Type'}</h3>
+            <input placeholder='Market Type' type='text' onChange={(e) => setMarketType(e.target.value)}></input>
+            <h3>{selectionOneTitle? selectionOneTitle : 'Selection One'}</h3>
+            <input placeholder='Selection One' type='text' onChange={(e) => setSelectionOneTitle(e.target.value)}></input>
+            <h3>{selectionTwoTitle? selectionTwoTitle : 'Selection Two'}</h3>
+            <input placeholder='Selection Two' type='text' onChange={(e) => setSelectionTwoTitle(e.target.value)}></input>
+            <button onClick={handleSubmitMarketInformation} className='submitBetInfoBtn topMargin25px'>Submit Market Information</button>
+          </div>
+          <div className='winnerContainer'>
+            <h3>Toggle Taking Bets</h3>
+            <button onClick={toggleTakingBets} className={takingBets? 'stopTakingBetsBtn' : 'startTakingBetsBtn'}>{takingBets? 'Stop Taking Bets' : 'Start Taking Bets'}</button>
+            <h3 className='topMargin25px'>Select A Winner</h3>
+            <div className='winnerBtnContainer'>
+              <button onClick={() => setWinner(1)} className='selectionOneBtn'>1</button>
+              <button onClick={() => setWinner(2)} className='selectionTwoBtn'>2</button>
+            </div>
+            <button onClick={handleDertermineWinner} className='submitBetInfoBtn'>
+              {
+              takingBets? 'Stop Taking Bets To Determine Winner' : 
+              !winner? 'Select A Winner' : `Determine ${winner} as Winner`
+              }
+            </button>
+          </div>
         </div>
-      </>
       }
     </div>
   );
