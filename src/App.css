@@ -188,9 +188,10 @@ header {
   padding: 10px;
   border-radius: 10px;
   border: none;
+  text-align: center;
 }
 .marketInfoContainer, .winnerContainer{
-  min-width: 250px;
+  width: 250px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -218,7 +219,7 @@ header {
   background: linear-gradient(193deg, #DA4EB9 0%, #DA4E4E 100%);
 }
 .startTakingBetsBtn {
-  background: linear-gradient(215deg, rgba(44,110,28,1) 0%, rgba(109,203,56,1) 100%);
+  background: linear-gradient(193deg, rgba(44,110,28,1) 0%, rgba(109,203,56,1) 100%);
 }
 .winnerBtnContainer {
   display: flex;

@@ -46,6 +46,8 @@ function App() {
       selectionOneTitle,
       selectionTwoTitle
     })
+    console.log(`outcomeOneBetAmount: `, outcomeOneBetAmount)
+    console.log(`outcomeTwoBetAmount: `, outcomeTwoBetAmount)
   }, [
     walletConnected,
     outcomeOneBetAmount,
@@ -114,11 +116,13 @@ function App() {
     const outcomeOneBetAmount = bettingContract.outcomeOneBetAmount();
     outcomeOneBetAmount.then((response) => {
       setOutcomeOneBetAmount(utils.formatUnits(response, 18));
+      console.log((utils.formatUnits(response, 18)) > 0)
     })
     
     const outcomeTwoBetAmount = bettingContract.outcomeTwoBetAmount();
     outcomeTwoBetAmount.then((response) => {
       setOutcomeTwoBetAmount(utils.formatUnits(response, 18));
+      console.log((utils.formatUnits(response, 18)) > 0)
     })
     const takingBets = bettingContract.takingBets();
     takingBets.then((response) => {
@@ -225,8 +229,10 @@ function App() {
   
       const tx = await bettingContract.initializeMarket(marketTitle, marketType, selectionOneTitle, selectionTwoTitle)
       await tx.wait()
+
+      renderMarketInfo()
   
-      setLoadingBetInfo(true);
+      setLoadingBetInfo(false);
 
     } else {
       alert(`Please Enter all market info\nmarketTitle: ${marketTitle}\nmarketType: ${marketType}\nselectionOneTitle: ${selectionOneTitle}\nselectionTwoTitle: ${selectionTwoTitle}`)
@@ -369,9 +375,8 @@ function App() {
         </div>
         { // If market all market data exists then render charts
           outcomeOneBetAmount &&
-          outcomeTwoBetAmount &&
-          selectionOneTitle && // TODO add > 0 
-          selectionTwoTitle ? // TODO add > 0 
+          outcomeTwoBetAmount
+           ?
           <div className='chartsContainer'>
             <div className="DoughnutChartHolder">
               <DoughnutChart marketInfo={marketInfo}/>
@@ -379,37 +384,43 @@ function App() {
             <div className="DoughnutChartHolder">
               <BarChart marketInfo={marketInfo}/>
             </div>
-          </div> : ""}
+          </div> : ""
+        }
       </>
       :
-        <div className='ownerDiv'>
-          <div className='marketInfoContainer topMargin25px'>
-            <h3>{marketTitle? marketTitle : 'Market Title'}</h3>
-            <input placeholder='Market Title' type='text' onChange={(e) => setMarketTitle(e.target.value)}></input>
-            <h3>{marketType? marketType : 'Market Type'}</h3>
-            <input placeholder='Market Type' type='text' onChange={(e) => setMarketType(e.target.value)}></input>
-            <h3>{selectionOneTitle? selectionOneTitle : 'Selection One'}</h3>
-            <input placeholder='Selection One' type='text' onChange={(e) => setSelectionOneTitle(e.target.value)}></input>
-            <h3>{selectionTwoTitle? selectionTwoTitle : 'Selection Two'}</h3>
-            <input placeholder='Selection Two' type='text' onChange={(e) => setSelectionTwoTitle(e.target.value)}></input>
-            <button onClick={handleSubmitMarketInformation} className='submitBetInfoBtn topMargin25px'>Submit Market Information</button>
+      <div className='ownerDiv'>
+        <div className='marketInfoContainer topMargin25px'>
+          <h3>{marketTitle? marketTitle : 'Market Title'}</h3>
+          <input placeholder='Market Title' type='text' onChange={(e) => setMarketTitle(e.target.value)}></input>
+          <h3>{marketType? marketType : 'Market Type'}</h3>
+          <input placeholder='Market Type' type='text' onChange={(e) => setMarketType(e.target.value)}></input>
+          <h3>{selectionOneTitle? selectionOneTitle : 'Selection One'}</h3>
+          <input placeholder='Selection One' type='text' onChange={(e) => setSelectionOneTitle(e.target.value)}></input>
+          <h3>{selectionTwoTitle? selectionTwoTitle : 'Selection Two'}</h3>
+          <input placeholder='Selection Two' type='text' onChange={(e) => setSelectionTwoTitle(e.target.value)}></input>
+          <button onClick={handleSubmitMarketInformation} className='submitBetInfoBtn topMargin25px'>Submit Market Information</button>
+        </div>
+        <div className='winnerContainer'>
+          <h3>Toggle Taking Bets</h3>
+          <button onClick={toggleTakingBets} className={takingBets? 'stopTakingBetsBtn' : 'startTakingBetsBtn'}>
+            {
+              !marketTitle || !marketType || !selectionOneTitle || !selectionTwoTitle ? 'Input Market Info':
+              takingBets? 'Stop Taking Bets' : 'Start Taking Bets'
+            }
+          </button>
+          <h3 className='topMargin25px'>Select A Winner</h3>
+          <div className='winnerBtnContainer'>
+            <button onClick={() => setWinner(1)} className='selectionOneBtn'>1</button>
+            <button onClick={() => setWinner(2)} className='selectionTwoBtn'>2</button>
           </div>
-          <div className='winnerContainer'>
-            <h3>Toggle Taking Bets</h3>
-            <button onClick={toggleTakingBets} className={takingBets? 'stopTakingBetsBtn' : 'startTakingBetsBtn'}>{takingBets? 'Stop Taking Bets' : 'Start Taking Bets'}</button>
-            <h3 className='topMargin25px'>Select A Winner</h3>
-            <div className='winnerBtnContainer'>
-              <button onClick={() => setWinner(1)} className='selectionOneBtn'>1</button>
-              <button onClick={() => setWinner(2)} className='selectionTwoBtn'>2</button>
-            </div>
-            <button onClick={handleDertermineWinner} className='submitBetInfoBtn'>
-              {
+          <button onClick={handleDertermineWinner} className='submitBetInfoBtn'>
+            {
               takingBets? 'Stop Taking Bets To Determine Winner' : 
               !winner? 'Select A Winner' : `Determine ${winner} as Winner`
-              }
-            </button>
-          </div>
+            }
+          </button>
         </div>
+      </div>
       }
     </div>
   );
