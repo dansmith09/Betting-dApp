@@ -374,8 +374,10 @@ function App() {
           </div>
         </div>
         { // If market all market data exists then render charts
-          outcomeOneBetAmount &&
-          outcomeTwoBetAmount
+          outcomeOneBetAmount > 0 &&
+          outcomeTwoBetAmount > 0 &&
+          selectionOneTitle &&
+          selectionTwoTitle
            ?
           <div className='chartsContainer'>
             <div className="DoughnutChartHolder">
