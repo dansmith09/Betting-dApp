@@ -32,7 +32,8 @@ function App() {
 
   useEffect(() => {
     web3ModalRef.current = new Web3Modal({
-      network: "goerli",
+      chainId: "534352",
+      defaultChain: 534352,
       providerOptions: {},
       disableInjectedProvider: false,
     })
@@ -180,12 +181,21 @@ function App() {
   };
 
   const resolveENS  = async (address) => {
+    console.log(address)
     const provider = await getProviderOrSigner()
-    provider.lookupAddress(address).then((response) => {
+
+    let testAddress = '0x2da82E54fB6397AA9C3dBbFD6303858e9a292395'
+    const transactions = await provider.getTransactionCount(testAddress)
+    console.log(transactions)
+
+    provider.lookupAddress(testAddress).then((response) => {
+    console.log('ens name: ',response)
     if(response) {
         setFormettedConnectedAddress(response)
+        console.log('ens name: ',response)
       }
     })
+
   }
 
   const toggleTakingBets = async () => {
@@ -374,8 +384,6 @@ function App() {
           </div>
         </div>
         { // If market all market data exists then render charts
-          outcomeOneBetAmount > 0 &&
-          outcomeTwoBetAmount > 0 &&
           selectionOneTitle &&
           selectionTwoTitle
            ?
